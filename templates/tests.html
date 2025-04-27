@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="tests">
+    <h2>Доступные тесты</h2>
+
+    <div class="test-list">
+        {% for test in tests %}
+            <a href="{{ url_for('take_test', test_id=test.id) }}" class="button">{{ test.title }} ({{ test.question_count }} вопросов)</a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

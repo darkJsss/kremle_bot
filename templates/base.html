@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>80 лет Победы в ВОВ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <div class="background-image"
+         style="background-image: url('{{ url_for('static', filename='images/victory.png') }}')">
+    </div>
+    <header>
+        <h1>80 лет Победы в Великой Отечественной Войне</h1>
+    </header>
+    <main>
+        <a href="{{ url_for('index') }}" class="back-button">
+            <img src="{{ url_for('static', filename='images/back.png') }}" alt="Назад">
+            На главную
+        </a>
+        <div class="content-overlay">
+        {% block content %}{% endblock %}
+        </div>
+    </main>
+    <footer>
+    </footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="leaderboard">
+    <h2>Рейтинг участников</h2>
+
+    <div class="overall-leaderboard">
+        <h3>Общий рейтинг</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Место</th>
+                    <th>Пользователь</th>
+                    <th>Общий балл</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for place, username, score in overall %}
+                    <tr {% if username == current_user.username %}class="current-user"{% endif %}>
+                        <td>{{ place }}</td>
+                        <td>{{ username }}</td>
+                        <td>{{ score }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% for test_name, stats in test_stats.items() %}
+        <div class="test-leaderboard">
+            <h3>{{ test_name }}</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Место</th>
+                        <th>Пользователь</th>
+                        <th>Балл</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for place, username, score in stats %}
+                        <tr {% if username == current_user.username %}class="current-user"{% endif %}>
+                            <td>{{ place }}</td>
+                            <td>{{ username }}</td>
+                            <td>{{ score }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

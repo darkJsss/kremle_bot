@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Тест: {{ test_name }}</h2>
+
+    <form method="POST" class="test-form">
+        {% for question_idx in range(questions|length) %}
+        {% set question = questions[question_idx] %}
+        <div class="question-card">
+            <div class="question-header">
+                <h3>Вопрос {{ loop.index }} из {{ questions|length }}</h3>
+                <p>{{ question.question }}</p>
+            </div>
+
+            <div class="options-container">
+                {% for option_idx in range(question.options|length) %}
+                {% set option = question.options[option_idx] %}
+                <div class="option">
+                    <input type="radio"
+                           id="question_{{ question_idx }}_option_{{ option_idx }}"
+                           name="question_{{ question_idx }}"
+                           value="{{ option }}"
+                           required>
+                    <label for="question_{{ question_idx }}_option_{{ option_idx }}">
+                        {{ option }}
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="test-controls">
+            <button type="submit" class="submit-button">Завершить тест</button>
+        </div>
+    </form>
+</div>
+
+<style>
+.question-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    background: white;
+}
+
+.question-header {
+    margin-bottom: 15px;
+}
+
+.options-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    transition: all 0.2s;
+}
+
+.option:hover {
+    background-color: #f5f5f5;
+}
+
+.option input[type="radio"] {
+    margin-right: 10px;
+}
+
+.test-controls {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.submit-button {
+    padding: 12px 30px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+    background-color: #c0392b;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Блокируем повторную отправку формы
+    const form = document.querySelector('.test-form');
+    form.addEventListener('submit', function() {
+        const submitButton = this.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        submitButton.textContent = 'Проверяем результаты...';
+    });
+
+    // Подсветка выбранных вариантов
+    document.querySelectorAll('.option').forEach(option => {
+        option.addEventListener('click', function() {
+            // Снимаем выделение со всех вариантов в этом вопросе
+            const questionCard = this.closest('.question-card');
+            questionCard.querySelectorAll('.option').forEach(opt => {
+                opt.style.backgroundColor = '';
+            });
+
+            // Подсвечиваем выбранный вариант
+            this.style.backgroundColor = '#e8f4f8';
+
+            // Отмечаем радио-кнопку
+            const radio = this.querySelector('input[type="radio"]');
+            radio.checked = true;
+        });
+    });
+});
+</script>
+{% endblock %}

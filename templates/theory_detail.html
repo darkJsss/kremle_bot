@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="theory-detail">
+    <h2>{{ topic.title }}</h2>
+    <div class="content">
+        {{ topic.content|safe }}
+    </div>
+    <a href="{{ url_for('theory') }}" class="back-button">
+        <img src="{{ url_for('static', filename='images/back.png') }}" alt="Назад">
+        К списку тем
+    </a>
+</div>
+{% endblock %}

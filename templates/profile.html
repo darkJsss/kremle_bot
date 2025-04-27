@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="profile">
+    <h2>Профиль пользователя: {{ current_user.username }}</h2>
+
+    <div class="results">
+        <h3>Ваши результаты:</h3>
+
+        {% if results %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Тест</th>
+                        <th>Результат</th>
+                        <th>Дата</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in results %}
+                        <tr>
+                            <td>{{ result.test_name }}</td>
+                            <td>{{ result.score }} из {{ result.max_score }}</td>
+                            <td>{{ result.completed_at.strftime('%d.%m.%Y %H:%M') }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Вы еще не проходили тесты.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

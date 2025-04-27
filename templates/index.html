@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Добро пожаловать, {{ username }}!</h2>
+
+    <div class="menu-grid">
+        <a href="{{ url_for('theory') }}" class="menu-card">
+            <div class="card-icon">📚</div>
+            <h3>Теория</h3>
+            <p>Изучите исторические материалы</p>
+        </a>
+
+        <a href="{{ url_for('tests') }}" class="menu-card">
+            <div class="card-icon">✍️</div>
+            <h3>Тесты</h3>
+            <p>Проверьте свои знания</p>
+        </a>
+
+        <a href="{{ url_for('profile') }}" class="menu-card">
+            <div class="card-icon">👤</div>
+            <h3>Профиль</h3>
+            <p>Ваши результаты</p>
+        </a>
+
+        <a href="{{ url_for('leaderboard') }}" class="menu-card">
+            <div class="card-icon">🏆</div>
+            <h3>Рейтинг</h3>
+            <p>Сравните свои достижения</p>
+        </a>
+
+        <a href="{{ url_for('about') }}" class="menu-card">
+            <div class="card-icon">i</div>
+            <h3>О нас</h3>
+            <p>Состав Команды</p>
+        </a>
+    </div>
+
+</div>
+{% endblock %}

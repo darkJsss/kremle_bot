@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="auth-form">
+        <h2>Вход в систему</h2>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for message in messages %}
+                        <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <label for="username">Имя пользователя:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit" class="button">Войти</button>
+        </form>
+
+        <div class="auth-links">
+            Нет аккаунта? <a href="{{ url_for('register') }}">Зарегистрироваться</a>
+        </div>
+    </div>
+{% endblock %}

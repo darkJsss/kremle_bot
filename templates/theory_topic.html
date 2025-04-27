@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="theory-topic">
+        <h2>{{ topic }}</h2>
+        <div class="content">
+            {{ content|safe }}
+        </div>
+        <a href="{{ url_for('theory') }}" class="button">Назад к темам</a>
+    </div>
+{% endblock %}

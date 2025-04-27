@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Результаты теста: {{ test_name }}</h2>
+    
+    <div class="result-summary">
+        <p>Ваш результат: <strong>{{ score }} из {{ total }}</strong> ({{ "%.1f"|format(score/total*100) }}%)</p>
+    </div>
+    
+    <div class="detailed-results">
+        {% for result in results %}
+        <div class="result-item {% if result.is_correct %}correct{% else %}incorrect{% endif %}">
+            <p><strong>Вопрос:</strong> {{ result.question }}</p>
+            <p>Ваш ответ: {{ result.user_answer }}</p>
+            {% if not result.is_correct %}
+            <p class="correct-answer">Правильный ответ: {{ result.correct_answer }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="action-buttons">
+        <a href="{{ url_for('tests') }}" class="button">К списку тестов</a>
+        <a href="{{ url_for('profile') }}" class="button">В профиль</a>
+    </div>
+</div>
+{% endblock %}
