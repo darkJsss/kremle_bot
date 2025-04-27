@@ -307,7 +307,8 @@ def take_test(test_id):
             max_score=len(questions)
         )
 
-        return render_template('test_results.html', test_name=test_name, score=score, total=len(questions), results=results)
+        return render_template('test_results.html', test_name=test_name, score=score, total=len(questions),
+                               results=results)
 
     return render_template('test.html', test_name=test_name, questions=questions, enumerate=enumerate)
 
@@ -318,9 +319,11 @@ def profile():
     results = TestResult.query.filter_by(user_id=current_user.id).order_by(TestResult.completed_at.desc()).all()
     return render_template('profile.html', user=current_user, results=results)
 
+
 @app.route('/about')
 def about():
     return render_template('about.html')
+
 
 @app.route('/leaderboard')
 @login_required
@@ -351,6 +354,7 @@ def leaderboard():
                            overall=overall,
                            test_stats=test_stats)
 
+
 @app.route('/test_image')
 def test_image():
     return f'''
@@ -360,7 +364,9 @@ def test_image():
          style="width: 300px; border: 2px solid red">
     '''
 
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    app.run()
+    app.run(port=8080, host='127.0.0.1')
