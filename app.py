@@ -3,6 +3,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+from flask_restful import Api, Resource, reqparse
+from flask import jsonify
+from flask_httpauth import HTTPBasicAuth
 import os
 
 app = Flask(__name__)
@@ -10,6 +13,54 @@ app.config['SECRET_KEY'] = 'your-secret-key-here'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///war_history.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = 'static/images'
+api = Api(app)
+auth = HTTPBasicAuth()
+@auth.verify_password
+def verify_password(username, password):
+    user = User.query.filter_by(username=username).first()
+    if user and user.check_password(password):
+        return username
+    return None
+
+
+class LeaderboardAPI(Resource):
+    def get(self):
+        overall = db.session.query(
+            User.username,
+            db.func.sum(TestResult.score).label('total_score')
+        ).join(TestResult).group_by(User.id).order_by(db.desc('total_score')).all()
+        result = {
+            'leaderboard': [
+                {'position': i + 1, 'username': username, 'score': score}
+                for i, (username, score) in enumerate(overall)
+            ]
+        }
+        return jsonify(result)
+
+
+class UserStatsAPI(Resource):
+    @auth.login_required
+    def get(self):
+        user = User.query.filter_by(username=auth.current_user()).first()
+        if not user:
+            return {'error': 'User not found'}, 404
+
+        results = TestResult.query.filter_by(user_id=user.id).all()
+
+        return jsonify({
+            'username': user.username,
+            'stats': [
+                {
+                    'test_name': r.test_name,
+                    'score': r.score,
+                    'max_score': r.max_score,
+                    'date': r.completed_at.isoformat()
+                } for r in results
+            ]
+        })
+
+api.add_resource(LeaderboardAPI, '/api/leaderboard')
+api.add_resource(UserStatsAPI, '/api/user/stats')
 
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
@@ -46,22 +97,17 @@ class TestResult(db.Model):
 
 
 def save_test_result(user_id, test_name, score, max_score):
-    """
-    Сохраняет или обновляет результат теста пользователя
-    """
     result = TestResult.query.filter_by(
         user_id=user_id,
         test_name=test_name
     ).first()
 
     if result:
-        # Обновляем существующий результат, если новый лучше
         if score > result.score:
             result.score = score
             result.max_score = max_score
             result.completed_at = datetime.utcnow()
     else:
-        # Создаем новую запись
         result = TestResult(
             user_id=user_id,
             test_name=test_name,
@@ -298,8 +344,6 @@ def take_test(test_id):
                 'correct_answer': question['correct'],
                 'is_correct': is_correct
             })
-
-        # Используем функцию save_test_result
         save_test_result(
             user_id=current_user.id,
             test_name=test_name,
@@ -328,16 +372,11 @@ def about():
 @app.route('/leaderboard')
 @login_required
 def leaderboard():
-    # Общий рейтинг (уже с enumerate в Python)
     overall_query = db.session.query(
         User.username,
         db.func.sum(TestResult.score).label('total_score')
     ).join(TestResult).group_by(User.id).order_by(db.desc('total_score')).all()
-
-    # Подготавливаем данные с нумерацией
     overall = [(i + 1, username, score) for i, (username, score) in enumerate(overall_query)]
-
-    # Рейтинг по тестам
     test_stats = {}
     for test_name in ['Битва за Москву', 'Блокада Ленинграда', 'Курская битва', 'Сталинградская битва']:
         stats_query = db.session.query(
@@ -346,8 +385,6 @@ def leaderboard():
         ).join(TestResult).filter(
             TestResult.test_name == test_name
         ).order_by(TestResult.score.desc()).limit(10).all()
-
-        # Добавляем нумерацию
         test_stats[test_name] = [(i + 1, username, score) for i, (username, score) in enumerate(stats_query)]
 
     return render_template('leaderboard.html',
