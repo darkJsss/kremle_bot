@@ -96,27 +96,19 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Блокируем повторную отправку формы
     const form = document.querySelector('.test-form');
     form.addEventListener('submit', function() {
         const submitButton = this.querySelector('button[type="submit"]');
         submitButton.disabled = true;
         submitButton.textContent = 'Проверяем результаты...';
     });
-
-    // Подсветка выбранных вариантов
     document.querySelectorAll('.option').forEach(option => {
         option.addEventListener('click', function() {
-            // Снимаем выделение со всех вариантов в этом вопросе
             const questionCard = this.closest('.question-card');
             questionCard.querySelectorAll('.option').forEach(opt => {
                 opt.style.backgroundColor = '';
             });
-
-            // Подсвечиваем выбранный вариант
             this.style.backgroundColor = '#e8f4f8';
-
-            // Отмечаем радио-кнопку
             const radio = this.querySelector('input[type="radio"]');
             radio.checked = true;
         });
